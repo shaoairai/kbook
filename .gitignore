@@ -1,0 +1,20 @@
+# 資料庫資料目錄
+db/
+
+# 環境變數
+.env
+.env.*
+!.env.example
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+*.log

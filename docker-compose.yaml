@@ -1,0 +1,67 @@
+services:
+  # Nuxt 4 前端服務
+  project:
+    image: shaoairai/project:v1
+    build:
+      context: .
+      dockerfile: ./dockerfiles/Dockerfile.nuxt
+    # 掛載
+    # volumes:
+    #   - ./:/app
+    container_name: project
+    restart: always
+    ports:
+      - "5566:3000"
+    environment:
+      - NODE_ENV=production
+      - NITRO_HOST=0.0.0.0
+      - NITRO_PORT=3000
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "10"
+    networks:
+      - project-network
+
+  # Flask 後端 API 服務
+  projectapi:
+    image: shaoairai/projectapi:v1
+    build:
+      context: .
+      dockerfile: ./dockerfiles/Dockerfile.python
+    # 掛載
+    # volumes:
+    #   - ./:/app
+    container_name: projectapi
+    restart: always
+    ports:
+      - "5567:5000"
+    environment:
+      - PYTHONUNBUFFERED=1
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "10"
+    command: sh -c "flask run --no-debugger --host 0.0.0.0 --port 5000"
+    networks:
+      - project-network
+
+  # PostgreSQL 資料庫
+  db:
+    image: "postgres:17-alpine"
+    container_name: db
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: alex
+      POSTGRES_PASSWORD: a123321a
+      POSTGRES_DB: postgresdb
+    volumes:
+      - ./db/:/var/lib/postgresql/data/
+    networks:
+      - project-network
+
+networks:
+  project-network:
+    driver: bridge

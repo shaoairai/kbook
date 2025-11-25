@@ -1,0 +1,19 @@
+# 使用輕量的 Node.js Alpine 映像來運行已編譯的 Nuxt 應用
+FROM node:22-alpine
+
+# 設定工作目錄
+WORKDIR /app
+
+# 只複製必要的檔案來運行已編譯的應用（從 frontend/ 目錄）
+COPY frontend/package*.json ./
+COPY frontend/.output ./.output
+COPY frontend/public ./public
+
+# 只安裝生產環境依賴（如果有需要的話）
+RUN npm ci --omit=dev
+
+# 暴露 Nuxt 預設端口
+EXPOSE 3000
+
+# 啟動 Nuxt 伺服器
+CMD ["node", ".output/server/index.mjs"]

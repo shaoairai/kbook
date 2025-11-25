@@ -1,0 +1,13 @@
+# 使用 Python 3.13 slim bookworm (Debian 12，支援至 2028)
+FROM python:3.13-slim-bookworm
+
+# 更新套件並清理快取
+RUN apt-get update && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# 複製應用程式檔案（從 backend/ 目錄）
+COPY backend/ /app
+
+# 安裝 Python 依賴（使用 --no-cache-dir 減少映像大小）
+RUN pip install --no-cache-dir -r requirements.txt
